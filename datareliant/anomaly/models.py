@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -26,7 +26,7 @@ class AnomalyResult(BaseModel):
     severity: Severity = Severity.MEDIUM
     is_anomaly: bool = True
     evidence: dict[str, Any] = Field(default_factory=dict)
-    detected_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    detected_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to JSON-serializable dictionary."""
@@ -45,7 +45,7 @@ class DistributionShiftResult(BaseModel):
     is_shift: bool
     severity: Severity = Severity.MEDIUM
     evidence: dict[str, Any] = Field(default_factory=dict)
-    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to JSON-serializable dictionary."""

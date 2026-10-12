@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -35,8 +35,12 @@ class ColumnStats(BaseModel):
     mean: float | None = None
     median: float | None = None
     std_dev: float | None = None
-    quantiles: dict[str, float] = Field(default_factory=dict)  # e.g., "p25", "p50", "p75", "p90", "p99"
-    categorical_frequencies: list[dict[str, Any]] = Field(default_factory=list)  # top value frequencies
+    quantiles: dict[str, float] = Field(
+        default_factory=dict
+    )  # e.g., "p25", "p50", "p75", "p90", "p99"
+    categorical_frequencies: list[dict[str, Any]] = Field(
+        default_factory=list
+    )  # top value frequencies
     approximate_cardinality: int | None = None
 
 
@@ -60,7 +64,7 @@ class DataProfile(BaseModel):
     dataset_stats: DatasetStats
     column_stats: dict[str, ColumnStats]
     temporal_stats: dict[str, TemporalStats]
-    profiled_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    profiled_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to JSON-serializable dictionary."""

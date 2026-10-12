@@ -15,12 +15,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from apps.api.routes import anomalies, datasets, evaluations, health, incidents, pipelines, quality
 from datareliant import __version__
 from datareliant.common.config import get_settings
 from datareliant.common.exceptions import DataReliantError
 from datareliant.common.logging import setup_logging
-
-from apps.api.routes import health, datasets, quality, anomalies, pipelines, incidents, evaluations
 
 logger = structlog.get_logger(__name__)
 
@@ -29,7 +28,7 @@ logger = structlog.get_logger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):  # noqa: ANN201, ARG001
+async def lifespan(app: FastAPI):
     """Application startup and shutdown hooks."""
     settings = get_settings()
     setup_logging(
@@ -75,7 +74,7 @@ def create_app() -> FastAPI:
 
     # ── Request-ID middleware ────────────────────────────────────────
     @app.middleware("http")
-    async def add_request_id(request: Request, call_next):  # noqa: ANN001, ANN201
+    async def add_request_id(request: Request, call_next):
         request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
         structlog.contextvars.clear_contextvars()
         structlog.contextvars.bind_contextvars(request_id=request_id)
@@ -85,9 +84,7 @@ def create_app() -> FastAPI:
 
     # ── Exception handlers ───────────────────────────────────────────
     @app.exception_handler(DataReliantError)
-    async def domain_exception_handler(
-        request: Request, exc: DataReliantError  # noqa: ARG001
-    ) -> JSONResponse:
+    async def domain_exception_handler(request: Request, exc: DataReliantError) -> JSONResponse:
         """Convert domain exceptions into structured JSON error responses."""
         request_id = request.headers.get("X-Request-ID", "unknown")
         logger.warning(
@@ -103,9 +100,7 @@ def create_app() -> FastAPI:
         return JSONResponse(status_code=exc.status_code, content=body)
 
     @app.exception_handler(Exception)
-    async def unhandled_exception_handler(
-        request: Request, exc: Exception  # noqa: ARG001
-    ) -> JSONResponse:
+    async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         """Catch-all handler — never expose raw stack traces in production."""
         request_id = request.headers.get("X-Request-ID", "unknown")
         logger.exception("unhandled_error", request_id=request_id)

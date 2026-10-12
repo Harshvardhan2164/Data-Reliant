@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import shutil
 from pathlib import Path
-from typing import Any
 
 import polars as pl
 from sqlalchemy import func, select
@@ -18,10 +17,9 @@ from datareliant.common.exceptions import (
     IngestionError,
 )
 from datareliant.common.models import DatasetModel, DatasetVersionModel
-from datareliant.ingestion.base import DataSource, IngestionResult
+from datareliant.ingestion.base import DataSource
 from datareliant.ingestion.sources import CSVSource, ParquetSource
 from datareliant.ingestion.validator import (
-    compute_file_hash,
     validate_file_format,
     validate_file_path,
 )
@@ -190,7 +188,9 @@ class IngestionService:
             )
 
         if not ver.file_path or not Path(ver.file_path).exists():
-            raise IngestionError(f"Data file for version {ver.version} not found at {ver.file_path}")
+            raise IngestionError(
+                f"Data file for version {ver.version} not found at {ver.file_path}"
+            )
 
         source = self.create_source_from_file(ver.file_path)
         df = source.load()

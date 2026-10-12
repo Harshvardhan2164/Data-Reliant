@@ -8,7 +8,7 @@ simple.  Each model maps to the table list specified in the design doc.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import (
     JSON,
@@ -29,7 +29,6 @@ from datareliant.common.types import (
     IncidentStatus,
     NodeType,
     RootCauseType,
-    SchemaChangeType,
     Severity,
     Status,
 )
@@ -40,7 +39,7 @@ def _uuid() -> str:
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 # ── Datasets ─────────────────────────────────────────────────────────
@@ -61,7 +60,7 @@ class DatasetModel(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    versions: Mapped[list["DatasetVersionModel"]] = relationship(back_populates="dataset")
+    versions: Mapped[list[DatasetVersionModel]] = relationship(back_populates="dataset")
 
 
 class DatasetVersionModel(Base):
@@ -81,12 +80,10 @@ class DatasetVersionModel(Base):
     schema_snapshot: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
-    dataset: Mapped["DatasetModel"] = relationship(back_populates="versions")
-    profiles: Mapped[list["ProfileModel"]] = relationship(back_populates="dataset_version")
+    dataset: Mapped[DatasetModel] = relationship(back_populates="versions")
+    profiles: Mapped[list[ProfileModel]] = relationship(back_populates="dataset_version")
 
-    __table_args__ = (
-        UniqueConstraint("dataset_id", "version", name="uq_dataset_version"),
-    )
+    __table_args__ = (UniqueConstraint("dataset_id", "version", name="uq_dataset_version"),)
 
 
 # ── Profiles ─────────────────────────────────────────────────────────
@@ -106,7 +103,7 @@ class ProfileModel(Base):
     temporal_stats: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
-    dataset_version: Mapped["DatasetVersionModel"] = relationship(back_populates="profiles")
+    dataset_version: Mapped[DatasetVersionModel] = relationship(back_populates="profiles")
 
 
 # ── Quality ──────────────────────────────────────────────────────────
@@ -260,10 +257,8 @@ class IncidentModel(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    anomaly_links: Mapped[list["IncidentAnomalyModel"]] = relationship(
-        back_populates="incident"
-    )
-    rootcause_candidates: Mapped[list["RootCauseCandidateModel"]] = relationship(
+    anomaly_links: Mapped[list[IncidentAnomalyModel]] = relationship(back_populates="incident")
+    rootcause_candidates: Mapped[list[RootCauseCandidateModel]] = relationship(
         back_populates="incident"
     )
 
@@ -281,11 +276,9 @@ class IncidentAnomalyModel(Base):
         String(64), ForeignKey("anomalies.id", ondelete="CASCADE"), nullable=False
     )
 
-    incident: Mapped["IncidentModel"] = relationship(back_populates="anomaly_links")
+    incident: Mapped[IncidentModel] = relationship(back_populates="anomaly_links")
 
-    __table_args__ = (
-        UniqueConstraint("incident_id", "anomaly_id", name="uq_incident_anomaly"),
-    )
+    __table_args__ = (UniqueConstraint("incident_id", "anomaly_id", name="uq_incident_anomaly"),)
 
 
 # ── Root Cause ───────────────────────────────────────────────────────
@@ -311,7 +304,7 @@ class RootCauseCandidateModel(Base):
     explanation: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
-    incident: Mapped["IncidentModel"] = relationship(back_populates="rootcause_candidates")
+    incident: Mapped[IncidentModel] = relationship(back_populates="rootcause_candidates")
 
 
 # ── Historical Incidents ─────────────────────────────────────────────
@@ -354,7 +347,7 @@ class ExperimentModel(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
-    results: Mapped[list["ExperimentResultModel"]] = relationship(back_populates="experiment")
+    results: Mapped[list[ExperimentResultModel]] = relationship(back_populates="experiment")
 
 
 class ExperimentResultModel(Base):
@@ -371,4 +364,4 @@ class ExperimentResultModel(Base):
     details: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
-    experiment: Mapped["ExperimentModel"] = relationship(back_populates="results")
+    experiment: Mapped[ExperimentModel] = relationship(back_populates="results")

@@ -4,6 +4,6 @@ from datareliant.rootcause.engine import RootCauseEngine
 from datareliant.rootcause.models import RootCauseCandidate
 
 __all__ = [
-    "RootCauseEngine",
     "RootCauseCandidate",
+    "RootCauseEngine",
 ]

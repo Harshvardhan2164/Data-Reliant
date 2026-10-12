@@ -60,7 +60,7 @@ async def detect_anomalies(
 @router.post("/anomalies/distribution-shift", summary="Detect distribution shift")
 async def detect_distribution_shift(
     req: DistributionShiftRequest,
-    session: AsyncSession = Depends(get_db_session),  # noqa: ARG001
+    session: AsyncSession = Depends(get_db_session),
 ) -> dict[str, Any]:
     """Execute KS, JSD, or PSI distribution drift analysis."""
     service = AnomalyService(session)

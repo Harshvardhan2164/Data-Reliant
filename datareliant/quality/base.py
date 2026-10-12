@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Type
+from collections.abc import Callable
+from typing import Any, ClassVar
 
 import polars as pl
 
 from datareliant.common.exceptions import QualityRuleError
-from datareliant.common.types import Severity, Status
+from datareliant.common.types import Status
 from datareliant.quality.models import QualityResult, QualityRuleConfig
 
 
@@ -69,13 +70,13 @@ class BaseQualityRule(ABC):
 class RuleRegistry:
     """Plugin registry for dynamically registering and retrieving quality rules."""
 
-    _registry: dict[str, Type[BaseQualityRule]] = {}
+    _registry: ClassVar[dict[str, type[BaseQualityRule]]] = {}
 
     @classmethod
-    def register(cls, rule_type: str) -> Callable[[Type[BaseQualityRule]], Type[BaseQualityRule]]:
+    def register(cls, rule_type: str) -> Callable[[type[BaseQualityRule]], type[BaseQualityRule]]:
         """Decorator to register a rule class with a given type string."""
 
-        def decorator(subclass: Type[BaseQualityRule]) -> Type[BaseQualityRule]:
+        def decorator(subclass: type[BaseQualityRule]) -> type[BaseQualityRule]:
             cls._registry[rule_type.lower()] = subclass
             subclass.rule_type = rule_type.lower()
             return subclass
@@ -83,13 +84,16 @@ class RuleRegistry:
         return decorator
 
     @classmethod
-    def get(cls, rule_type: str) -> Type[BaseQualityRule]:
+    def get(cls, rule_type: str) -> type[BaseQualityRule]:
         """Retrieve the rule class for a given type string."""
         key = rule_type.lower()
         if key not in cls._registry:
             raise QualityRuleError(
                 f"Unknown quality rule type '{rule_type}'. Available types: {list(cls._registry.keys())}",
-                details={"requested_type": rule_type, "available_types": list(cls._registry.keys())},
+                details={
+                    "requested_type": rule_type,
+                    "available_types": list(cls._registry.keys()),
+                },
             )
         return cls._registry[key]
 
@@ -102,4 +106,4 @@ class RuleRegistry:
     @classmethod
     def available_rules(cls) -> list[str]:
         """Return list of all registered rule types."""
-        return sorted(list(cls._registry.keys()))
+        return sorted(cls._registry.keys())

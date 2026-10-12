@@ -356,7 +356,7 @@ class CUSUMDetector(BaseAnomalyDetector):
 
         s_pos = 0.0
         s_neg = 0.0
-        for z in list(z_hist) + [z_curr]:
+        for z in [*list(z_hist), z_curr]:
             s_pos = max(0.0, s_pos + z - self.k)
             s_neg = max(0.0, s_neg - z - self.k)
 
@@ -390,7 +390,9 @@ class CUSUMDetector(BaseAnomalyDetector):
 class IsolationForestDetector(BaseAnomalyDetector):
     """Unsupervised Isolation Forest anomaly detector for tabular/series metric data."""
 
-    def __init__(self, contamination: float = 0.05, random_state: int = 42, **parameters: Any) -> None:
+    def __init__(
+        self, contamination: float = 0.05, random_state: int = 42, **parameters: Any
+    ) -> None:
         super().__init__(**parameters)
         self.contamination = contamination
         self.random_state = random_state

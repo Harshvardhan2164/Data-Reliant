@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import contextlib
 from typing import Any
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from datareliant.anomaly.models import AnomalyResult
@@ -67,10 +68,8 @@ async def correlate_anomalies(
     lineage_graph = None
     if req.pipeline_id:
         lineage_service = LineageService(session)
-        try:
+        with contextlib.suppress(Exception):
             lineage_graph = await lineage_service.get_pipeline_graph(req.pipeline_id)
-        except Exception:
-            pass
 
     service = IncidentService(session)
     incidents = await service.correlate_and_analyze(

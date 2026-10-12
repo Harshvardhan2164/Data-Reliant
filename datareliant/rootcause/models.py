@@ -7,7 +7,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from datareliant.common.types import Evidence, EvidenceCategory, RootCauseType
+from datareliant.common.types import Evidence, RootCauseType
 
 
 class RootCauseCandidate(BaseModel):

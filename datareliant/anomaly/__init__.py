@@ -6,13 +6,13 @@ from datareliant.anomaly.service import AnomalyService
 from datareliant.anomaly.temporal import TemporalAnalysisResult, TemporalAnomalyAnalyzer
 
 __all__ = [
+    "AnomalyEngine",
+    "AnomalyResult",
+    "AnomalyService",
     "BaseAnomalyDetector",
     "DetectorRegistry",
     "DistributionShiftDetector",
-    "AnomalyEngine",
-    "AnomalyService",
-    "AnomalyResult",
     "DistributionShiftResult",
-    "TemporalAnomalyAnalyzer",
     "TemporalAnalysisResult",
+    "TemporalAnomalyAnalyzer",
 ]

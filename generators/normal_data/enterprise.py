@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import polars as pl
@@ -24,8 +23,8 @@ class EnterpriseDataGenerator:
         end_date: datetime | None = None,
     ) -> pl.DataFrame:
         """Generate synthetic customer accounts."""
-        start = start_date or datetime(2025, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-        end = end_date or datetime(2025, 6, 1, 0, 0, 0, tzinfo=timezone.utc)
+        start = start_date or datetime(2025, 1, 1, 0, 0, 0, tzinfo=UTC)
+        end = end_date or datetime(2025, 6, 1, 0, 0, 0, tzinfo=UTC)
         total_seconds = int((end - start).total_seconds())
 
         customer_ids = [f"CUST_{i:06d}" for i in range(1, n_rows + 1)]
@@ -89,8 +88,8 @@ class EnterpriseDataGenerator:
         end_date: datetime | None = None,
     ) -> pl.DataFrame:
         """Generate transactions referencing customers and products."""
-        start = start_date or datetime(2025, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-        end = end_date or datetime(2025, 6, 1, 0, 0, 0, tzinfo=timezone.utc)
+        start = start_date or datetime(2025, 1, 1, 0, 0, 0, tzinfo=UTC)
+        end = end_date or datetime(2025, 6, 1, 0, 0, 0, tzinfo=UTC)
         total_seconds = int((end - start).total_seconds())
 
         tx_ids = [f"TX_{i:08d}" for i in range(1, n_rows + 1)]
@@ -104,10 +103,10 @@ class EnterpriseDataGenerator:
         quantities = self.rng.integers(1, 10, size=n_rows)
 
         # Price lookup
-        price_map = dict(zip(products_df["product_id"].to_list(), products_df["price"].to_list(), strict=False))
-        amounts = np.round(
-            np.array([price_map[p] for p in chosen_prods]) * quantities, 2
+        price_map = dict(
+            zip(products_df["product_id"].to_list(), products_df["price"].to_list(), strict=False)
         )
+        amounts = np.round(np.array([price_map[p] for p in chosen_prods]) * quantities, 2)
 
         channels = ["WEB", "MOBILE_APP", "PARTNER_API", "IN_STORE"]
         chosen_channels = self.rng.choice(channels, size=n_rows, p=[0.45, 0.35, 0.10, 0.10])
@@ -141,11 +140,15 @@ class EnterpriseDataGenerator:
         chosen_methods = self.rng.choice(methods, size=n_rows, p=[0.55, 0.25, 0.10, 0.10])
 
         # 95% settled, 3% failed, 2% pending
-        statuses = self.rng.choice(["SETTLED", "FAILED", "PENDING"], size=n_rows, p=[0.95, 0.03, 0.02])
+        statuses = self.rng.choice(
+            ["SETTLED", "FAILED", "PENDING"], size=n_rows, p=[0.95, 0.03, 0.02]
+        )
 
         # Processing delay between 1 second and 120 seconds
         delays = self.rng.integers(1, 120, size=n_rows)
-        processed_ats = [t + timedelta(seconds=int(d)) for t, d in zip(tx_times, delays, strict=False)]
+        processed_ats = [
+            t + timedelta(seconds=int(d)) for t, d in zip(tx_times, delays, strict=False)
+        ]
 
         amounts = transactions_df["amount"].to_numpy()
         fees = np.round(amounts * 0.025 + 0.30, 2)

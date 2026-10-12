@@ -1,1 +1,1 @@
-﻿# generators package
+# generators package

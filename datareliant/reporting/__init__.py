@@ -10,6 +10,6 @@ from datareliant.reporting.explanations import (
 __all__ = [
     "ExplanationProvider",
     "ExplanationReport",
-    "RuleBasedExplanationProvider",
     "LocalLLMExplanationProvider",
+    "RuleBasedExplanationProvider",
 ]

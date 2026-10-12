@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -51,7 +51,7 @@ class QualityResult(BaseModel):
     total_evaluated: int = 0
     evidence: dict[str, Any] = Field(default_factory=dict)
     metadata: dict[str, Any] = Field(default_factory=dict)
-    executed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    executed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-safe dictionary."""
@@ -72,7 +72,7 @@ class QualityRunSummary(BaseModel):
     high_failures: int
     total_duration_ms: float
     results: list[QualityResult] = Field(default_factory=list)
-    executed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    executed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @property
     def has_critical_failure(self) -> bool:

@@ -67,7 +67,11 @@ class RootCauseEngine:
                 )
 
             # Missing data / row count drop signal (when not caused by foreign key)
-            if ("row_count" in metric_lower or "missing" in metric_lower) and "referential" not in det_lower and "orphan" not in metric_lower:
+            if (
+                ("row_count" in metric_lower or "missing" in metric_lower)
+                and "referential" not in det_lower
+                and "orphan" not in metric_lower
+            ):
                 self._add_evidence(
                     candidates_map,
                     RootCauseType.MISSING_DATA,
@@ -79,7 +83,12 @@ class RootCauseEngine:
                 )
 
             # Distribution shift signal
-            if "ks" in det_lower or "shift" in metric_lower or "psi" in det_lower or "distribution" in metric_lower:
+            if (
+                "ks" in det_lower
+                or "shift" in metric_lower
+                or "psi" in det_lower
+                or "distribution" in metric_lower
+            ):
                 self._add_evidence(
                     candidates_map,
                     RootCauseType.DISTRIBUTION_SHIFT,
@@ -91,7 +100,11 @@ class RootCauseEngine:
                 )
 
             # Datatype change signal
-            if "datatype" in metric_lower or "type" in metric_lower or "incompatible" in metric_lower:
+            if (
+                "datatype" in metric_lower
+                or "type" in metric_lower
+                or "incompatible" in metric_lower
+            ):
                 self._add_evidence(
                     candidates_map,
                     RootCauseType.TYPE_CHANGE,
@@ -103,7 +116,11 @@ class RootCauseEngine:
                 )
 
             # Schema drift signal (added/removed columns)
-            if ("schema" in det_lower or "column" in metric_lower or "drift" in metric_lower) and "datatype" not in metric_lower and "type" not in metric_lower:
+            if (
+                ("schema" in det_lower or "column" in metric_lower or "drift" in metric_lower)
+                and "datatype" not in metric_lower
+                and "type" not in metric_lower
+            ):
                 self._add_evidence(
                     candidates_map,
                     RootCauseType.SCHEMA_DRIFT,
@@ -192,9 +209,17 @@ class RootCauseEngine:
                 except Exception:
                     continue
                 if upstream:
-                    upstream_ids = [u["id"] for u in upstream if isinstance(u, dict) and "id" in u] or [str(u) for u in upstream]
-                    upstream_in_incident = [uid for uid in upstream_ids if uid in incident.affected_nodes]
-                    score = min(1.0, 0.80 + 0.10 * len(upstream_in_incident)) if upstream_in_incident else min(1.0, 0.5 + 0.15 * len(upstream_ids))
+                    upstream_ids = [
+                        u["id"] for u in upstream if isinstance(u, dict) and "id" in u
+                    ] or [str(u) for u in upstream]
+                    upstream_in_incident = [
+                        uid for uid in upstream_ids if uid in incident.affected_nodes
+                    ]
+                    score = (
+                        min(1.0, 0.80 + 0.10 * len(upstream_in_incident))
+                        if upstream_in_incident
+                        else min(1.0, 0.5 + 0.15 * len(upstream_ids))
+                    )
                     self._add_evidence(
                         candidates_map,
                         RootCauseType.UPSTREAM_FAILURE,

@@ -30,7 +30,9 @@ class SchemaDiff(BaseModel):
     overall_classification: SchemaChangeType
     added_columns: list[str] = Field(default_factory=list)
     removed_columns: list[str] = Field(default_factory=list)
-    renamed_columns: list[dict[str, str]] = Field(default_factory=list)  # [{"old": ..., "new": ...}]
+    renamed_columns: list[dict[str, str]] = Field(
+        default_factory=list
+    )  # [{"old": ..., "new": ...}]
     type_changes: list[dict[str, Any]] = Field(default_factory=list)
     nullability_changes: list[dict[str, Any]] = Field(default_factory=list)
     changes: list[ColumnChange] = Field(default_factory=list)

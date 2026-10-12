@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import uuid
-from datetime import datetime, timedelta, timezone
-from typing import Any
+from datetime import timedelta
 
 from datareliant.anomaly.models import AnomalyResult
 from datareliant.common.types import IncidentStatus, Severity
@@ -117,7 +115,7 @@ class IncidentCorrelator:
                     start_time=start_t,
                     end_time=end_t,
                     pipeline_id=pipeline_id,
-                    affected_nodes=sorted(list(affected)),
+                    affected_nodes=sorted(affected),
                     anomaly_ids=[a.id for a in cluster],
                     anomalies=cluster,
                     metadata={"anomaly_count": len(cluster)},

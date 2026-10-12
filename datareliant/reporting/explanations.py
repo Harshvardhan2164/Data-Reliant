@@ -70,7 +70,12 @@ class RuleBasedExplanationProvider(ExplanationProvider):
         # Synthesize evidence
         evidence_items: list[str] = []
         if top_candidate:
-            evidence_items.extend([e.description if hasattr(e, "description") else str(e) for e in top_candidate.evidence_items])
+            evidence_items.extend(
+                [
+                    e.description if hasattr(e, "description") else str(e)
+                    for e in top_candidate.evidence_items
+                ]
+            )
             for cat, score in top_candidate.evidence_breakdown.items():
                 evidence_items.append(
                     f"Category '{cat.capitalize()}' signal strength: {int(score * 100)}%"

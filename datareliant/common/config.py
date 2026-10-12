@@ -8,9 +8,8 @@ from __future__ import annotations
 
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -52,9 +51,7 @@ class Settings(BaseSettings):
     app_version: str = "0.1.0"
 
     # ── Database ─────────────────────────────────────────────────────
-    database_url: str = (
-        "postgresql+asyncpg://datareliant:datareliant@localhost:5432/datareliant"
-    )
+    database_url: str = "postgresql+asyncpg://datareliant:datareliant@localhost:5432/datareliant"
     database_url_sync: str = (
         "postgresql+psycopg2://datareliant:datareliant@localhost:5432/datareliant"
     )
@@ -77,14 +74,14 @@ class Settings(BaseSettings):
     duckdb_path: Path = Path("./data/analytics.duckdb")
 
     # ── GCP (optional) ───────────────────────────────────────────────
-    gcp_project_id: Optional[str] = None
-    gcp_region: Optional[str] = None
-    gcs_bucket: Optional[str] = None
-    bigquery_dataset: Optional[str] = None
+    gcp_project_id: str | None = None
+    gcp_region: str | None = None
+    gcs_bucket: str | None = None
+    bigquery_dataset: str | None = None
 
     # ── LLM (optional) ──────────────────────────────────────────────
-    llm_provider: Optional[str] = None
-    llm_model_path: Optional[str] = None
+    llm_provider: str | None = None
+    llm_model_path: str | None = None
 
     # ── Derived properties ───────────────────────────────────────────
     @property

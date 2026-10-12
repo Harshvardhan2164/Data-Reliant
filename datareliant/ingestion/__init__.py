@@ -12,16 +12,16 @@ from datareliant.ingestion.validator import (
 )
 
 __all__ = [
+    "CSVSource",
     "DataSource",
     "DataSourceMetadata",
     "IngestionResult",
-    "CSVSource",
+    "IngestionService",
     "ParquetSource",
     "PostgreSQLSource",
-    "IngestionService",
+    "compute_file_hash",
+    "detect_file_encoding",
+    "validate_file_format",
     "validate_file_path",
     "validate_file_size",
-    "validate_file_format",
-    "detect_file_encoding",
-    "compute_file_hash",
 ]

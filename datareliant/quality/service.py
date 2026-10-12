@@ -13,7 +13,6 @@ from datareliant.common.models import QualityResultModel, QualityRuleModel
 from datareliant.ingestion.service import IngestionService
 from datareliant.quality.engine import QualityEngine
 from datareliant.quality.models import (
-    QualityResult,
     QualityRuleConfig,
     QualityRunSummary,
     QualitySuiteConfig,

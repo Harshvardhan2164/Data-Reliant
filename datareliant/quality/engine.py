@@ -5,11 +5,11 @@ from __future__ import annotations
 import time
 import uuid
 from pathlib import Path
-from typing import Any
 
 import polars as pl
 import yaml
 
+import datareliant.quality.rules  # noqa: F401 - ensures all rules are registered
 from datareliant.common.types import Severity, Status
 from datareliant.quality.base import QualityContext, RuleRegistry
 from datareliant.quality.models import (
@@ -18,7 +18,6 @@ from datareliant.quality.models import (
     QualityRunSummary,
     QualitySuiteConfig,
 )
-import datareliant.quality.rules  # noqa: F401 - ensures all rules are registered
 
 
 class QualityEngine:
@@ -95,7 +94,9 @@ class QualityEngine:
     def load_suite_from_yaml(path_or_content: Path | str) -> QualitySuiteConfig:
         """Parse a YAML configuration into a QualitySuiteConfig."""
         if isinstance(path_or_content, Path) or (
-            isinstance(path_or_content, str) and "\n" not in path_or_content and Path(path_or_content).exists()
+            isinstance(path_or_content, str)
+            and "\n" not in path_or_content
+            and Path(path_or_content).exists()
         ):
             path = Path(path_or_content)
             content = path.read_text(encoding="utf-8")

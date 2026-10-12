@@ -8,12 +8,11 @@ referenced by multiple subsystems.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field
-
 
 # ── Enumerations ─────────────────────────────────────────────────────
 
@@ -102,8 +101,8 @@ class EvidenceCategory(str, Enum):
 class TimestampMixin(BaseModel):
     """Mixin providing created/updated timestamps."""
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class IdentifiableMixin(BaseModel):

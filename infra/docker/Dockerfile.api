@@ -12,9 +12,11 @@ WORKDIR /app
 # ── Dependencies ─────────────────────────────────────────────────────
 FROM base AS deps
 
-COPY pyproject.toml ./
+COPY pyproject.toml README.md LICENSE ./
+COPY datareliant/ ./datareliant/
+COPY generators/ ./generators/
 RUN pip install --upgrade pip && \
-    pip install -e "." 2>/dev/null || pip install .
+    pip install .
 
 # ── Application ──────────────────────────────────────────────────────
 FROM base AS runtime
@@ -22,7 +24,7 @@ FROM base AS runtime
 COPY --from=deps /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=deps /usr/local/bin /usr/local/bin
 
-COPY pyproject.toml ./
+COPY pyproject.toml README.md LICENSE ./
 COPY datareliant/ ./datareliant/
 COPY apps/api/ ./apps/api/
 COPY generators/ ./generators/
@@ -30,7 +32,7 @@ COPY configs/ ./configs/
 COPY alembic/ ./alembic/
 COPY alembic.ini ./
 
-RUN pip install -e . --no-deps 2>/dev/null || true
+RUN pip install --no-deps -e .
 
 # Create data directories
 RUN mkdir -p /app/data/storage

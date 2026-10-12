@@ -9,13 +9,13 @@ from datareliant.profiling.schema_drift import ColumnChange, SchemaDiff, SchemaD
 from datareliant.profiling.service import ProfilingService
 
 __all__ = [
-    "DataProfiler",
-    "ProfilingService",
-    "DataProfile",
-    "DatasetStats",
-    "ColumnStats",
-    "TemporalStats",
-    "SchemaDriftEngine",
-    "SchemaDiff",
     "ColumnChange",
+    "ColumnStats",
+    "DataProfile",
+    "DataProfiler",
+    "DatasetStats",
+    "ProfilingService",
+    "SchemaDiff",
+    "SchemaDriftEngine",
+    "TemporalStats",
 ]

@@ -24,12 +24,19 @@ def main() -> None:
 
 @main.command()
 @click.option("--scenario", default="all", help="Scenario to evaluate (or 'all').")
-@click.option("--method", default="engine", type=click.Choice(["engine", "heuristic", "ml", "compare"]), help="Method to evaluate.")
+@click.option(
+    "--method",
+    default="engine",
+    type=click.Choice(["engine", "heuristic", "ml", "compare"]),
+    help="Method to evaluate.",
+)
 @click.option("--seed", default=42, type=int, help="Random seed for reproducibility.")
 @click.option("--output-dir", default="experiments/results", help="Output directory for reports.")
 def evaluate(scenario: str, method: str, seed: int, output_dir: str) -> None:
     """Run research evaluation against synthetic failure scenarios."""
-    click.echo(f"[*] Running DataReliant benchmark: scenario={scenario}, method={method}, seed={seed}")
+    click.echo(
+        f"[*] Running DataReliant benchmark: scenario={scenario}, method={method}, seed={seed}"
+    )
     runner = EvaluationRunner(seed=seed)
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -42,7 +49,7 @@ def evaluate(scenario: str, method: str, seed: int, output_dir: str) -> None:
         with open(json_file, "w", encoding="utf-8") as f:
             json.dump(comp_dict, f, indent=2)
 
-        for m_name, summary in comparisons.items():
+        for _m_name, summary in comparisons.items():
             click.echo("\n" + runner.format_markdown_report(summary))
         click.echo(f"\n[+] Method comparison saved to: {json_file}")
         return
@@ -61,14 +68,19 @@ def evaluate(scenario: str, method: str, seed: int, output_dir: str) -> None:
         click.echo(f"\n[+] Benchmark results saved to:\n  - {json_file}\n  - {md_file}")
     else:
         if scenario not in SCENARIO_NAMES:
-            click.echo(f"[-] Error: Scenario '{scenario}' not recognized. Choose from: {SCENARIO_NAMES}", err=True)
+            click.echo(
+                f"[-] Error: Scenario '{scenario}' not recognized. Choose from: {SCENARIO_NAMES}",
+                err=True,
+            )
             return
         result = runner.run_scenario(scenario, method=method)
         click.echo(f"Scenario: {result.scenario_type}")
         click.echo(f"True Root Cause: {result.true_root_cause}")
         click.echo(f"Predicted Top 1: {result.predicted_top_1} (Correct: {result.top_1_correct})")
         click.echo(f"Predicted Top 3: {result.predicted_top_3} (Correct: {result.top_3_correct})")
-        click.echo(f"Compression: {result.anomaly_count} anomalies -> {result.compressed_incident_count} incidents ({result.compression_ratio}x)")
+        click.echo(
+            f"Compression: {result.anomaly_count} anomalies -> {result.compressed_incident_count} incidents ({result.compression_ratio}x)"
+        )
         click.echo(f"Latency: {result.time_to_detect_ms:.2f} ms")
 
 
@@ -76,10 +88,18 @@ def evaluate(scenario: str, method: str, seed: int, output_dir: str) -> None:
 @click.option("--rows", default=1000, type=int, help="Base transactions count to generate.")
 @click.option("--seed", default=42, type=int, help="Random seed.")
 @click.option("--output-dir", default="datasets/synthetic", help="Output directory.")
-@click.option("--format", "file_format", default="csv", type=click.Choice(["csv", "parquet"]), help="File format.")
+@click.option(
+    "--format",
+    "file_format",
+    default="csv",
+    type=click.Choice(["csv", "parquet"]),
+    help="File format.",
+)
 def generate(rows: int, seed: int, output_dir: str, file_format: str) -> None:
     """Generate synthetic enterprise datasets with relational integrity."""
-    click.echo(f"[*] Generating enterprise synthetic data (seed={seed}, base_transactions={rows})...")
+    click.echo(
+        f"[*] Generating enterprise synthetic data (seed={seed}, base_transactions={rows})..."
+    )
     generator = EnterpriseDataGenerator(seed=seed)
     n_customers = max(10, rows // 5)
     n_products = max(5, rows // 20)

@@ -10,10 +10,10 @@ from datareliant.lineage.models import (
 from datareliant.lineage.service import LineageService
 
 __all__ = [
-    "LineageGraph",
-    "LineageService",
-    "LineageNode",
-    "LineageEdge",
-    "PipelineMetadata",
     "BlastRadiusReport",
+    "LineageEdge",
+    "LineageGraph",
+    "LineageNode",
+    "LineageService",
+    "PipelineMetadata",
 ]

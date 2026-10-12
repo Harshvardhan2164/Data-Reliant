@@ -9,7 +9,6 @@ import networkx as nx
 import yaml
 
 from datareliant.common.exceptions import LineageError
-from datareliant.common.types import NodeType
 from datareliant.lineage.models import (
     BlastRadiusReport,
     LineageEdge,
@@ -185,7 +184,7 @@ class LineageGraph:
             topo_order = {node: i for i, node in enumerate(nx.topological_sort(self.graph))}
             return max(shared, key=lambda n: topo_order.get(n, 0))
         except Exception:
-            return list(shared)[0]
+            return next(iter(shared))
 
     def compute_blast_radius(self, node_id: str) -> BlastRadiusReport:
         """Execute comprehensive blast radius impact analysis for failure at node_id."""

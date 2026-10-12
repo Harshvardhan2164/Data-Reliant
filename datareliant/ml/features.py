@@ -36,7 +36,7 @@ class IncidentMLFeatureExtractor:
         ctx = context or {}
 
         metrics_lower = [a.metric.lower() for a in incident.anomalies]
-        scores = [a.anomaly_score for a in incident.anomalies]
+        [a.anomaly_score for a in incident.anomalies]
 
         # 1. record_count_delta
         rc_scores = [a.anomaly_score for a in incident.anomalies if "row" in a.metric.lower()]
@@ -51,7 +51,11 @@ class IncidentMLFeatureExtractor:
         dup_delta = max(dup_scores, default=0.0)
 
         # 4. freshness_delta
-        fresh_scores = [a.anomaly_score for a in incident.anomalies if "fresh" in a.metric.lower() or "time" in a.metric.lower()]
+        fresh_scores = [
+            a.anomaly_score
+            for a in incident.anomalies
+            if "fresh" in a.metric.lower() or "time" in a.metric.lower()
+        ]
         fresh_delta = max(fresh_scores, default=0.0)
 
         # 5. processing_delay
@@ -70,7 +74,11 @@ class IncidentMLFeatureExtractor:
         downstream_impact = float(len(incident.affected_nodes))
 
         # 9. distribution_distance (KS or PSI metric score)
-        dist_scores = [a.anomaly_score for a in incident.anomalies if "ks" in a.detector.lower() or "psi" in a.detector.lower()]
+        dist_scores = [
+            a.anomaly_score
+            for a in incident.anomalies
+            if "ks" in a.detector.lower() or "psi" in a.detector.lower()
+        ]
         dist_distance = max(dist_scores, default=0.0)
 
         # 10. dependency_depth

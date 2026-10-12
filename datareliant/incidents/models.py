@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 from datareliant.anomaly.models import AnomalyResult
-from datareliant.common.types import IncidentStatus, RootCauseType, Severity
+from datareliant.common.types import IncidentStatus, Severity
 from datareliant.rootcause.models import RootCauseCandidate
 
 
@@ -26,7 +26,7 @@ class Incident(BaseModel):
     anomalies: list[AnomalyResult] = Field(default_factory=list)
     candidate_causes: list[RootCauseCandidate] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @property
     def anomaly_count(self) -> int:

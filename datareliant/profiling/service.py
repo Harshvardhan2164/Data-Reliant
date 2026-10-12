@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
-import polars as pl
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from datareliant.common.exceptions import DatasetNotFoundError, ProfilingError
-from datareliant.common.models import DatasetModel, DatasetVersionModel, ProfileModel
+from datareliant.common.models import DatasetVersionModel, ProfileModel
 from datareliant.ingestion.service import IngestionService
 from datareliant.profiling.models import DataProfile
 from datareliant.profiling.profiler import DataProfiler
@@ -51,7 +49,9 @@ class ProfilingService:
             dataset_version_id=ver_model.id,
             dataset_stats=profile.dataset_stats.model_dump(mode="json"),
             column_stats={k: v.model_dump(mode="json") for k, v in profile.column_stats.items()},
-            temporal_stats={k: v.model_dump(mode="json") for k, v in profile.temporal_stats.items()},
+            temporal_stats={
+                k: v.model_dump(mode="json") for k, v in profile.temporal_stats.items()
+            },
         )
         self.session.add(profile_model)
         await self.session.flush()

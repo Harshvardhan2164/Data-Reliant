@@ -7,8 +7,8 @@ from datareliant.ml.classifier import (
 from datareliant.ml.features import FEATURE_NAMES, IncidentMLFeatureExtractor
 
 __all__ = [
-    "MLRootCauseClassifier",
-    "MLModelEvaluationMetrics",
-    "IncidentMLFeatureExtractor",
     "FEATURE_NAMES",
+    "IncidentMLFeatureExtractor",
+    "MLModelEvaluationMetrics",
+    "MLRootCauseClassifier",
 ]

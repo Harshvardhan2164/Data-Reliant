@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import numpy as np
 from pydantic import BaseModel, Field
-
-from datareliant.common.types import Severity
 
 
 class TemporalAnalysisResult(BaseModel):
@@ -26,7 +24,7 @@ class TemporalAnalysisResult(BaseModel):
     spikes: list[dict[str, Any]] = Field(default_factory=list)
     drops: list[dict[str, Any]] = Field(default_factory=list)
     evidence: dict[str, Any] = Field(default_factory=dict)
-    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to JSON-serializable dictionary."""
@@ -71,7 +69,9 @@ class TemporalAnomalyAnalyzer:
                 [(ts_sorted[i] - ts_sorted[i - 1]).total_seconds() for i in range(1, n)]
             )
             median_interval = float(np.median(time_diffs_sec))
-            exp_interval = expected_interval_seconds or (median_interval if median_interval > 0 else 3600.0)
+            exp_interval = expected_interval_seconds or (
+                median_interval if median_interval > 0 else 3600.0
+            )
 
             gap_threshold = exp_interval * 2.0
             for i in range(1, n):
@@ -89,7 +89,7 @@ class TemporalAnomalyAnalyzer:
         # 2. Trend detection via linear regression
         x = np.arange(n, dtype=float)
         if n >= 3:
-            slope, intercept = np.polyfit(x, vals, deg=1)
+            slope, _intercept = np.polyfit(x, vals, deg=1)
             mean_v = float(np.mean(vals))
             norm_slope = slope / max(abs(mean_v), 1e-6)
 

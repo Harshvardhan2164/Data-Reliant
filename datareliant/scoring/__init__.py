@@ -1,1 +1,1 @@
-﻿# datareliant.scoring package
+# datareliant.scoring package

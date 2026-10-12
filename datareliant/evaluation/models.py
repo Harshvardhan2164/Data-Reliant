@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -37,7 +37,7 @@ class BenchmarkSummary(BaseModel):
     mean_compression_ratio: float
     mean_time_to_detect_ms: float
     results: list[EvaluationBenchmarkResult] = Field(default_factory=list)
-    evaluated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    evaluated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to JSON-serializable dictionary."""

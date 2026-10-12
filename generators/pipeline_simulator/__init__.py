@@ -1,1 +1,1 @@
-﻿# generators.pipeline_simulator package
+# generators.pipeline_simulator package

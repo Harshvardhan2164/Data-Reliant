@@ -44,7 +44,7 @@ async def upload_dataset(
             shutil.copyfileobj(file.file, f)
 
         ingestion = IngestionService(session)
-        dataset, ver, df = await ingestion.ingest_file(
+        dataset, ver, _df = await ingestion.ingest_file(
             file_path=temp_file,
             dataset_name=name,
             description=description,
@@ -225,7 +225,9 @@ async def get_schema_diff(
     if base_version not in v_map:
         raise IngestionError(f"Base version {base_version} not found for dataset {dataset.name}")
     if target_version not in v_map:
-        raise IngestionError(f"Target version {target_version} not found for dataset {dataset.name}")
+        raise IngestionError(
+            f"Target version {target_version} not found for dataset {dataset.name}"
+        )
 
     engine = SchemaDriftEngine()
     diff = engine.compare_schemas(

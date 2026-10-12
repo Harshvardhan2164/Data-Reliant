@@ -30,7 +30,12 @@ def extract_incident_features(incident: Incident) -> dict[str, float]:
     has_dup = float(any("duplicate" in m or "dup" in m for m in metrics_lower))
     has_rows = float(any("row_count" in m or "missing" in m for m in metrics_lower))
     has_schema = float(any("schema" in m or "drift" in m for m in metrics_lower))
-    has_shift = float(any("shift" in m or "ks" in d or "psi" in d for m, d in zip(metrics_lower, dets_lower, strict=False)))
+    has_shift = float(
+        any(
+            "shift" in m or "ks" in d or "psi" in d
+            for m, d in zip(metrics_lower, dets_lower, strict=False)
+        )
+    )
     has_temporal = float(any("freshness" in m or "timestamp" in m for m in metrics_lower))
 
     max_score = max([a.anomaly_score for a in incident.anomalies], default=0.0)
@@ -105,7 +110,11 @@ class IncidentSimilarityEngine:
         if self.session is None:
             return []
 
-        stmt = select(HistoricalIncidentModel).order_by(HistoricalIncidentModel.created_at.desc()).limit(100)
+        stmt = (
+            select(HistoricalIncidentModel)
+            .order_by(HistoricalIncidentModel.created_at.desc())
+            .limit(100)
+        )
         res = await self.session.execute(stmt)
         models = res.scalars().all()
 

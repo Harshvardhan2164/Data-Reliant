@@ -51,7 +51,9 @@ async def get_pipeline_lineage(
     return {"status": "success", "lineage": graph.to_d3_dict()}
 
 
-@router.get("/pipelines/{pipeline_id}/blast-radius/{node_id}", summary="Compute blast radius impact")
+@router.get(
+    "/pipelines/{pipeline_id}/blast-radius/{node_id}", summary="Compute blast radius impact"
+)
 async def get_blast_radius(
     pipeline_id: str,
     node_id: str,

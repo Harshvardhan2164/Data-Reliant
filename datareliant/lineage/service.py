@@ -72,7 +72,9 @@ class LineageService:
             node_models = n_res.scalars().all()
 
             if node_models:
-                e_stmt = select(PipelineEdgeModel).where(PipelineEdgeModel.pipeline_id == pipeline_id)
+                e_stmt = select(PipelineEdgeModel).where(
+                    PipelineEdgeModel.pipeline_id == pipeline_id
+                )
                 e_res = await self.session.execute(e_stmt)
                 edge_models = e_res.scalars().all()
 
@@ -112,9 +114,7 @@ class LineageService:
 
         # Scan pipelines_dir
         if self.pipelines_dir.exists():
-            return [
-                {"pipeline_id": p.stem} for p in self.pipelines_dir.glob("*.yaml")
-            ]
+            return [{"pipeline_id": p.stem} for p in self.pipelines_dir.glob("*.yaml")]
         return []
 
     async def get_blast_radius(self, pipeline_id: str, node_id: str) -> BlastRadiusReport:

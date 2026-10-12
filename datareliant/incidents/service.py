@@ -119,7 +119,9 @@ class IncidentService:
                 {
                     "id": m.id,
                     "title": m.title,
-                    "severity": m.severity.value if hasattr(m.severity, "value") else str(m.severity),
+                    "severity": m.severity.value
+                    if hasattr(m.severity, "value")
+                    else str(m.severity),
                     "status": m.status.value if hasattr(m.status, "value") else str(m.status),
                     "start_time": m.start_time.isoformat(),
                     "end_time": m.end_time.isoformat() if m.end_time else None,

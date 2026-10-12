@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any
+from datetime import UTC, datetime
 
 import polars as pl
 
@@ -81,29 +80,47 @@ class DataProfiler:
             if dtype.is_numeric() and row_count > null_count:
                 non_nulls = series.drop_nulls()
                 if non_nulls.len() > 0:
-                    col_stat.min_value = float(non_nulls.min()) if non_nulls.min() is not None else None
-                    col_stat.max_value = float(non_nulls.max()) if non_nulls.max() is not None else None
-                    col_stat.mean = float(non_nulls.mean()) if non_nulls.mean() is not None else None
-                    col_stat.median = float(non_nulls.median()) if non_nulls.median() is not None else None
+                    col_stat.min_value = (
+                        float(non_nulls.min()) if non_nulls.min() is not None else None
+                    )
+                    col_stat.max_value = (
+                        float(non_nulls.max()) if non_nulls.max() is not None else None
+                    )
+                    col_stat.mean = (
+                        float(non_nulls.mean()) if non_nulls.mean() is not None else None
+                    )
+                    col_stat.median = (
+                        float(non_nulls.median()) if non_nulls.median() is not None else None
+                    )
                     col_stat.std_dev = (
-                        float(non_nulls.std()) if non_nulls.len() > 1 and non_nulls.std() is not None else 0.0
+                        float(non_nulls.std())
+                        if non_nulls.len() > 1 and non_nulls.std() is not None
+                        else 0.0
                     )
                     # Quantiles
                     col_stat.quantiles = {
-                        "p25": float(non_nulls.quantile(0.25)) if non_nulls.quantile(0.25) is not None else 0.0,
-                        "p50": float(non_nulls.quantile(0.50)) if non_nulls.quantile(0.50) is not None else 0.0,
-                        "p75": float(non_nulls.quantile(0.75)) if non_nulls.quantile(0.75) is not None else 0.0,
-                        "p90": float(non_nulls.quantile(0.90)) if non_nulls.quantile(0.90) is not None else 0.0,
-                        "p99": float(non_nulls.quantile(0.99)) if non_nulls.quantile(0.99) is not None else 0.0,
+                        "p25": float(non_nulls.quantile(0.25))
+                        if non_nulls.quantile(0.25) is not None
+                        else 0.0,
+                        "p50": float(non_nulls.quantile(0.50))
+                        if non_nulls.quantile(0.50) is not None
+                        else 0.0,
+                        "p75": float(non_nulls.quantile(0.75))
+                        if non_nulls.quantile(0.75) is not None
+                        else 0.0,
+                        "p90": float(non_nulls.quantile(0.90))
+                        if non_nulls.quantile(0.90) is not None
+                        else 0.0,
+                        "p99": float(non_nulls.quantile(0.99))
+                        if non_nulls.quantile(0.99) is not None
+                        else 0.0,
                     }
 
             # Categorical / string metrics
-            if (dtype == pl.String or dtype == pl.Categorical or dtype == pl.Boolean) and row_count > 0:
-                val_counts = (
-                    series.drop_nulls()
-                    .value_counts(sort=True)
-                    .head(self.top_n_categories)
-                )
+            if (
+                dtype == pl.String or dtype == pl.Categorical or dtype == pl.Boolean
+            ) and row_count > 0:
+                val_counts = series.drop_nulls().value_counts(sort=True).head(self.top_n_categories)
                 freq_list = []
                 for row in val_counts.iter_rows():
                     freq_list.append(
@@ -183,13 +200,8 @@ class DataProfiler:
             try:
                 # If date/datetime
                 if isinstance(max_val, datetime):
-                    if max_val.tzinfo is None:
-                        aware_max = max_val.replace(tzinfo=timezone.utc)
-                    else:
-                        aware_max = max_val
-                    freshness_sec = max(
-                        0.0, (datetime.now(timezone.utc) - aware_max).total_seconds()
-                    )
+                    aware_max = max_val.replace(tzinfo=UTC) if max_val.tzinfo is None else max_val
+                    freshness_sec = max(0.0, (datetime.now(UTC) - aware_max).total_seconds())
             except Exception:
                 pass
 
@@ -221,10 +233,7 @@ class DataProfiler:
 
                         # Gap detection: intervals > 2.0x median interval
                         if total_secs > 0:
-                            if hasattr(diffs, "dt"):
-                                sec_diffs = diffs.dt.total_seconds()
-                            else:
-                                sec_diffs = diffs
+                            sec_diffs = diffs.dt.total_seconds() if hasattr(diffs, "dt") else diffs
                             gaps = sec_diffs.filter(sec_diffs > (total_secs * 2.0))
                             gaps_count = gaps.len()
             except Exception:

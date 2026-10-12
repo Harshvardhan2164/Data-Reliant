@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any
+from datetime import UTC, datetime
 
 import polars as pl
 
 from datareliant.common.types import Status
 from datareliant.quality.base import BaseQualityRule, QualityContext, RuleRegistry
 from datareliant.quality.models import QualityResult
-
 
 # ── 1. Not Null Rule ─────────────────────────────────────────────────
 
@@ -283,7 +281,7 @@ class CategoricalValuesRule(BaseQualityRule):
             execution_time_ms=0.0,
             status=Status.PASSED if passed else Status.FAILED,
             severity=self.config.severity,
-            expected=f"Values in {sorted(list(allowed))}",
+            expected=f"Values in {sorted(allowed)}",
             actual=f"{viol_count} unexpected values (e.g. {unexpected_samples})",
             failure_percentage=round(fail_pct, 4),
             failure_count=viol_count,
@@ -387,14 +385,14 @@ class FreshnessRule(BaseQualityRule):
         try:
             if isinstance(max_ts, datetime):
                 if max_ts.tzinfo is None:
-                    max_ts = max_ts.replace(tzinfo=timezone.utc)
-                age_sec = (datetime.now(timezone.utc) - max_ts).total_seconds()
+                    max_ts = max_ts.replace(tzinfo=UTC)
+                age_sec = (datetime.now(UTC) - max_ts).total_seconds()
             else:
                 # String conversion attempt
                 parsed = datetime.fromisoformat(str(max_ts))
                 if parsed.tzinfo is None:
-                    parsed = parsed.replace(tzinfo=timezone.utc)
-                age_sec = (datetime.now(timezone.utc) - parsed).total_seconds()
+                    parsed = parsed.replace(tzinfo=UTC)
+                age_sec = (datetime.now(UTC) - parsed).total_seconds()
         except Exception:
             age_sec = 0.0
 
@@ -409,7 +407,7 @@ class FreshnessRule(BaseQualityRule):
             status=Status.PASSED if passed else Status.FAILED,
             severity=self.config.severity,
             expected=f"Data age <= {max_age_sec}s",
-            actual=f"Latest timestamp is {str(max_ts)} (age: {round(age_sec, 1)}s)",
+            actual=f"Latest timestamp is {max_ts!s} (age: {round(age_sec, 1)}s)",
             failure_percentage=0.0 if passed else 100.0,
             evidence={"latest_timestamp": str(max_ts), "age_seconds": round(age_sec, 1)},
         )

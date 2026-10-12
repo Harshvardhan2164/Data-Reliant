@@ -6,10 +6,10 @@ from typing import Any
 
 import numpy as np
 
+import datareliant.anomaly.detectors  # noqa: F401 - ensures detectors are registered
 from datareliant.anomaly.base import DetectorRegistry
 from datareliant.anomaly.detectors import DistributionShiftDetector
 from datareliant.anomaly.models import AnomalyResult, DistributionShiftResult
-import datareliant.anomaly.detectors  # noqa: F401 - ensures detectors are registered
 
 
 class AnomalyEngine:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import numpy as np
@@ -13,8 +13,6 @@ from datareliant.anomaly.models import AnomalyResult
 from datareliant.common.types import NodeType, RootCauseType, Severity
 from datareliant.evaluation.models import BenchmarkSummary, EvaluationBenchmarkResult
 from datareliant.incidents.correlator import IncidentCorrelator
-from datareliant.incidents.models import Incident
-from datareliant.incidents.similarity import extract_incident_features
 from datareliant.lineage.graph import LineageGraph
 from datareliant.lineage.models import LineageEdge, LineageNode, PipelineMetadata
 from datareliant.ml.classifier import MLRootCauseClassifier
@@ -53,7 +51,7 @@ class EvaluationRunner:
     def _setup_ml_model(self) -> None:
         """Pre-train ML classifier on synthetic diverse samples for benchmark comparison."""
         rng = np.random.default_rng(self.seed)
-        feature_extractor = IncidentMLFeatureExtractor()
+        IncidentMLFeatureExtractor()
         causes = [
             RootCauseType.MISSING_DATA.value,
             RootCauseType.DUPLICATE_INGESTION.value,
@@ -104,7 +102,9 @@ class EvaluationRunner:
                 X_train_list.append(vec)
                 y_train_list.append(cause)
 
-        self.ml_classifier = MLRootCauseClassifier(model_type="random_forest", random_state=self.seed)
+        self.ml_classifier = MLRootCauseClassifier(
+            model_type="random_forest", random_state=self.seed
+        )
         self.ml_classifier.train_and_evaluate(np.array(X_train_list), y_train_list, test_size=0.2)
 
     def _create_enterprise_lineage(self) -> LineageGraph:
@@ -136,10 +136,12 @@ class EvaluationRunner:
     ) -> EvaluationBenchmarkResult:
         """Inject failure scenario, run detection + correlation + root-cause, and evaluate."""
         start_time = time.perf_counter()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         injector = FailureInjector(seed=self.seed)
         generator = EnterpriseDataGenerator(seed=self.seed)
-        data = generator.generate(n_customers=100, n_products=20, n_transactions=400, n_payments=300)
+        data = generator.generate(
+            n_customers=100, n_products=20, n_transactions=400, n_payments=300
+        )
         lineage = self._create_enterprise_lineage()
 
         corrupted_df: pl.DataFrame | None = None
@@ -151,7 +153,9 @@ class EvaluationRunner:
 
         # 1. Execute failure injection and produce corresponding system detections
         if scenario_name == "missing_rows":
-            corrupted_df, scenario = injector.inject_missing_rows(tx_df, drop_fraction=0.35, dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_missing_rows(
+                tx_df, drop_fraction=0.35, dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="row_count",
@@ -166,7 +170,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "duplicate_rows":
-            corrupted_df, scenario = injector.inject_duplicate_rows(tx_df, duplicate_fraction=0.30, dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_duplicate_rows(
+                tx_df, duplicate_fraction=0.30, dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="duplicate_rows",
@@ -181,7 +187,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "null_spike":
-            corrupted_df, scenario = injector.inject_null_spike(tx_df, column="amount", null_fraction=0.45, dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_null_spike(
+                tx_df, column="amount", null_fraction=0.45, dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="not_null",
@@ -196,7 +204,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "schema_addition":
-            corrupted_df, scenario = injector.inject_schema_addition(tx_df, new_column="unannounced_metadata", dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_schema_addition(
+                tx_df, new_column="unannounced_metadata", dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="schema_drift",
@@ -211,7 +221,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "schema_removal":
-            corrupted_df, scenario = injector.inject_schema_removal(tx_df, column="channel", dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_schema_removal(
+                tx_df, column="channel", dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="schema_drift",
@@ -226,7 +238,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "datatype_change":
-            corrupted_df, scenario = injector.inject_datatype_change(tx_df, column="amount", dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_datatype_change(
+                tx_df, column="amount", dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="schema_drift",
@@ -241,7 +255,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "range_violation":
-            corrupted_df, scenario = injector.inject_range_violation(tx_df, column="amount", fraction=0.20, factor=20.0, dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_range_violation(
+                tx_df, column="amount", fraction=0.20, factor=20.0, dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="range",
@@ -256,7 +272,12 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "categorical_corruption":
-            corrupted_df, scenario = injector.inject_categorical_corruption(tx_df, column="channel", corrupted_value="ILLEGAL_STATUS_CODE", dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_categorical_corruption(
+                tx_df,
+                column="channel",
+                corrupted_value="ILLEGAL_STATUS_CODE",
+                dataset_name="transactions",
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="categorical_values",
@@ -271,7 +292,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "distribution_shift":
-            corrupted_df, scenario = injector.inject_distribution_shift(tx_df, column="amount", shift_mean=40.0, dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_distribution_shift(
+                tx_df, column="amount", shift_mean=40.0, dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="ks_test",
@@ -286,7 +309,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "timezone_shift":
-            corrupted_df, scenario = injector.inject_timezone_shift(tx_df, column="timestamp", offset_hours=-5, dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_timezone_shift(
+                tx_df, column="timestamp", offset_hours=-5, dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="temporal_gap",
@@ -300,7 +325,9 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "late_arrival":
-            corrupted_df, scenario = injector.inject_late_arrival(tx_df, column="timestamp", fraction=0.25, delay_days=14, dataset_name="transactions")
+            corrupted_df, scenario = injector.inject_late_arrival(
+                tx_df, column="timestamp", fraction=0.25, delay_days=14, dataset_name="transactions"
+            )
             anomalies.append(
                 AnomalyResult(
                     detector="freshness",
@@ -315,70 +342,77 @@ class EvaluationRunner:
                 )
             )
         elif scenario_name == "upstream_failure":
-            corrupted_cust, corrupted_tx, scenario = injector.inject_upstream_failure(
+            corrupted_cust, _corrupted_tx, scenario = injector.inject_upstream_failure(
                 cust_df, tx_df, upstream_key="customer_id", downstream_key="customer_id"
             )
             # Two correlated anomalies across pipeline
-            anomalies.extend([
-                AnomalyResult(
-                    detector="row_count",
-                    dataset_name="customers",
-                    node_id="customers",
-                    metric="row_count",
-                    observed=float(corrupted_cust.height),
-                    expected=float(cust_df.height),
-                    anomaly_score=5.8,
-                    severity=Severity.CRITICAL,
-                    detected_at=now,
-                ),
-                AnomalyResult(
-                    detector="referential_integrity",
-                    dataset_name="transactions",
-                    node_id="transactions",
-                    metric="foreign_key_orphan_count",
-                    observed=150.0,
-                    expected=0.0,
-                    anomaly_score=5.1,
-                    severity=Severity.HIGH,
-                    detected_at=now,
-                ),
-            ])
+            anomalies.extend(
+                [
+                    AnomalyResult(
+                        detector="row_count",
+                        dataset_name="customers",
+                        node_id="customers",
+                        metric="row_count",
+                        observed=float(corrupted_cust.height),
+                        expected=float(cust_df.height),
+                        anomaly_score=5.8,
+                        severity=Severity.CRITICAL,
+                        detected_at=now,
+                    ),
+                    AnomalyResult(
+                        detector="referential_integrity",
+                        dataset_name="transactions",
+                        node_id="transactions",
+                        metric="foreign_key_orphan_count",
+                        observed=150.0,
+                        expected=0.0,
+                        anomaly_score=5.1,
+                        severity=Severity.HIGH,
+                        detected_at=now,
+                    ),
+                ]
+            )
         elif scenario_name == "mixed_failure":
             corrupted_df, scenario = injector.inject_mixed_failure(
-                tx_df, numeric_column="amount", categorical_column="channel", dataset_name="transactions"
+                tx_df,
+                numeric_column="amount",
+                categorical_column="channel",
+                dataset_name="transactions",
             )
-            anomalies.extend([
-                AnomalyResult(
-                    detector="not_null",
-                    dataset_name="transactions",
-                    node_id="transactions",
-                    metric="null_rate_amount",
-                    observed=0.25,
-                    anomaly_score=4.0,
-                    severity=Severity.HIGH,
-                    detected_at=now,
-                ),
-                AnomalyResult(
-                    detector="categorical_values",
-                    dataset_name="transactions",
-                    node_id="transactions",
-                    metric="channel_invalid",
-                    observed=1.0,
-                    anomaly_score=3.8,
-                    severity=Severity.HIGH,
-                    detected_at=now,
-                ),
-                AnomalyResult(
-                    detector="schema_drift",
-                    dataset_name="transactions",
-                    node_id="transactions",
-                    metric="column_added",
-                    observed=1.0,
-                    anomaly_score=3.0,
-                    severity=Severity.MEDIUM,
-                    detected_at=now,
-                ),
-            ])
+            anomalies.extend(
+                [
+                    AnomalyResult(
+                        detector="not_null",
+                        dataset_name="transactions",
+                        node_id="transactions",
+                        metric="null_rate_amount",
+                        observed=0.25,
+                        anomaly_score=4.0,
+                        severity=Severity.HIGH,
+                        detected_at=now,
+                    ),
+                    AnomalyResult(
+                        detector="categorical_values",
+                        dataset_name="transactions",
+                        node_id="transactions",
+                        metric="channel_invalid",
+                        observed=1.0,
+                        anomaly_score=3.8,
+                        severity=Severity.HIGH,
+                        detected_at=now,
+                    ),
+                    AnomalyResult(
+                        detector="schema_drift",
+                        dataset_name="transactions",
+                        node_id="transactions",
+                        metric="column_added",
+                        observed=1.0,
+                        anomaly_score=3.0,
+                        severity=Severity.MEDIUM,
+                        detected_at=now,
+                    ),
+                ]
+            )
         else:
             raise ValueError(f"Unknown scenario name '{scenario_name}'")
 
@@ -401,7 +435,9 @@ class EvaluationRunner:
 
             if method == "engine":
                 # Deterministic multi-signal ranking
-                candidates = self.root_cause_engine.analyze_incident(primary_incident, lineage_graph=lineage)
+                candidates = self.root_cause_engine.analyze_incident(
+                    primary_incident, lineage_graph=lineage
+                )
                 if candidates:
                     predicted_top_1 = candidates[0].root_cause_type.value
                     predicted_top_3 = [c.root_cause_type.value for c in candidates[:3]]
@@ -453,7 +489,7 @@ class EvaluationRunner:
         elapsed_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
         true_rc = scenario.root_cause.value
 
-        top_1_correct = (predicted_top_1.lower() == true_rc.lower())
+        top_1_correct = predicted_top_1.lower() == true_rc.lower()
         top_3_correct = any(p.lower() == true_rc.lower() for p in predicted_top_3)
         detected = anom_count > 0
 
@@ -496,7 +532,7 @@ class EvaluationRunner:
             mean_compression_ratio=round(mean_comp, 2),
             mean_time_to_detect_ms=round(mean_ttd, 2),
             results=results,
-            evaluated_at=datetime.now(timezone.utc),
+            evaluated_at=datetime.now(UTC),
         )
 
     def compare_methods(self) -> dict[str, BenchmarkSummary]:

@@ -38,9 +38,9 @@ _async_engine = None
 _async_session_factory = None
 
 
-def get_async_engine(settings: Any | None = None):  # noqa: ANN201
+def get_async_engine(settings: Any | None = None):
     """Lazily create and return the async engine."""
-    global _async_engine  # noqa: PLW0603
+    global _async_engine
     if _async_engine is None:
         s = settings or get_settings()
         _async_engine = create_async_engine(
@@ -54,7 +54,7 @@ def get_async_engine(settings: Any | None = None):  # noqa: ANN201
 
 def get_async_session_factory(settings: Any | None = None) -> async_sessionmaker[AsyncSession]:
     """Lazily create and return the async session factory."""
-    global _async_session_factory  # noqa: PLW0603
+    global _async_session_factory
     if _async_session_factory is None:
         engine = get_async_engine(settings)
         _async_session_factory = async_sessionmaker(
@@ -94,9 +94,9 @@ _sync_engine = None
 _sync_session_factory = None
 
 
-def get_sync_engine(settings: Any | None = None):  # noqa: ANN201
+def get_sync_engine(settings: Any | None = None):
     """Lazily create and return the sync engine."""
-    global _sync_engine  # noqa: PLW0603
+    global _sync_engine
     if _sync_engine is None:
         s = settings or get_settings()
         _sync_engine = create_engine(
@@ -110,7 +110,7 @@ def get_sync_engine(settings: Any | None = None):  # noqa: ANN201
 
 def get_sync_session_factory(settings: Any | None = None) -> sessionmaker[Session]:
     """Lazily create and return the sync session factory."""
-    global _sync_session_factory  # noqa: PLW0603
+    global _sync_session_factory
     if _sync_session_factory is None:
         engine = get_sync_engine(settings)
         _sync_session_factory = sessionmaker(bind=engine, expire_on_commit=False)

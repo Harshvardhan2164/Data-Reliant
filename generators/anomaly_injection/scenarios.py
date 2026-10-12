@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import numpy as np
@@ -24,7 +24,7 @@ class FailureScenario(BaseModel):
     description: str
     parameters: dict[str, Any] = Field(default_factory=dict)
     ground_truth: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to JSON-serializable dictionary."""
@@ -252,7 +252,9 @@ class FailureInjector:
         mask[indices] = True
 
         orig_col = df[column]
-        new_col = pl.when(pl.Series(mask)).then(pl.lit(corrupted_value)).otherwise(orig_col).alias(column)
+        new_col = (
+            pl.when(pl.Series(mask)).then(pl.lit(corrupted_value)).otherwise(orig_col).alias(column)
+        )
         corrupted_df = df.with_columns(new_col)
 
         scenario = FailureScenario(
@@ -410,6 +412,8 @@ class FailureInjector:
             severity=Severity.CRITICAL,
             target_dataset=dataset_name,
             description=f"Multiple compound failures injected into {dataset_name}",
-            ground_truth={"components": ["null_spike", "categorical_corruption", "schema_addition"]},
+            ground_truth={
+                "components": ["null_spike", "categorical_corruption", "schema_addition"]
+            },
         )
         return df_step3, scenario

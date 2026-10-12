@@ -5,14 +5,13 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
+import xgboost as xgb
 from pydantic import BaseModel, Field
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
-import xgboost as xgb
 
-from datareliant.common.types import RootCauseType
 from datareliant.ml.features import FEATURE_NAMES
 
 
@@ -83,7 +82,7 @@ class MLRootCauseClassifier:
     ) -> MLModelEvaluationMetrics:
         """Train model with proper train/test split and calculate full research metrics."""
         y_arr = np.asarray(y)
-        unique_classes = sorted(list(set(y_arr)))
+        unique_classes = sorted(set(y_arr))
         self.classes_ = unique_classes
         self.class_to_idx = {c: i for i, c in enumerate(unique_classes)}
         y_encoded = np.array([self.class_to_idx[c] for c in y_arr])
@@ -94,7 +93,9 @@ class MLRootCauseClassifier:
             y_encoded,
             test_size=test_size,
             random_state=self.random_state,
-            stratify=y_encoded if len(unique_classes) > 1 and len(y_encoded) >= 2 * len(unique_classes) else None,
+            stratify=y_encoded
+            if len(unique_classes) > 1 and len(y_encoded) >= 2 * len(unique_classes)
+            else None,
         )
 
         self.model.fit(X_train, y_train)
@@ -157,7 +158,4 @@ class MLRootCauseClassifier:
         probs = self.model.predict_proba(X_input)[0]
 
         top_indices = np.argsort(probs)[::-1][:k]
-        return [
-            (self.classes_[idx], round(float(probs[idx]), 4))
-            for idx in top_indices
-        ]
+        return [(self.classes_[idx], round(float(probs[idx]), 4)) for idx in top_indices]

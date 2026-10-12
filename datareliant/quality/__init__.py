@@ -13,11 +13,11 @@ from datareliant.quality.service import QualityService
 __all__ = [
     "BaseQualityRule",
     "QualityContext",
-    "RuleRegistry",
     "QualityEngine",
-    "QualityService",
     "QualityResult",
     "QualityRuleConfig",
-    "QualitySuiteConfig",
     "QualityRunSummary",
+    "QualityService",
+    "QualitySuiteConfig",
+    "RuleRegistry",
 ]

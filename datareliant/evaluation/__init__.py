@@ -4,8 +4,8 @@ from datareliant.evaluation.models import BenchmarkSummary, EvaluationBenchmarkR
 from datareliant.evaluation.runner import SCENARIO_NAMES, EvaluationRunner
 
 __all__ = [
-    "EvaluationRunner",
+    "SCENARIO_NAMES",
     "BenchmarkSummary",
     "EvaluationBenchmarkResult",
-    "SCENARIO_NAMES",
+    "EvaluationRunner",
 ]

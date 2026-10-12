@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import UTC, datetime
 from typing import Any
 
 import polars as pl
@@ -20,7 +19,7 @@ class DataSourceMetadata(BaseModel):
     file_hash: str | None = None
     format: str
     encoding: str | None = None
-    ingested_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    ingested_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     extra: dict[str, Any] = Field(default_factory=dict)
 
 

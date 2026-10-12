@@ -41,7 +41,7 @@ Thumbs.db
 desktop.ini
 
 # ── Data (never commit data) ────────────────────────────────────────
-data/
+/data/
 *.csv
 *.parquet
 *.arrow
@@ -71,7 +71,6 @@ htmlcov/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-tests/
 
 # ── Terraform ────────────────────────────────────────────────────────
 .terraform/
