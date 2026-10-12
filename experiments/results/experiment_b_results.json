@@ -1,0 +1,42 @@
+[
+  {
+    "lineage_depth": 1,
+    "raw_anomalies": 2,
+    "incidents_with_lineage": 1,
+    "compression_ratio_lineage": 2.0,
+    "incidents_without_lineage": 2,
+    "compression_ratio_naive": 1.0
+  },
+  {
+    "lineage_depth": 2,
+    "raw_anomalies": 3,
+    "incidents_with_lineage": 1,
+    "compression_ratio_lineage": 3.0,
+    "incidents_without_lineage": 3,
+    "compression_ratio_naive": 1.0
+  },
+  {
+    "lineage_depth": 3,
+    "raw_anomalies": 4,
+    "incidents_with_lineage": 1,
+    "compression_ratio_lineage": 4.0,
+    "incidents_without_lineage": 4,
+    "compression_ratio_naive": 1.0
+  },
+  {
+    "lineage_depth": 4,
+    "raw_anomalies": 5,
+    "incidents_with_lineage": 1,
+    "compression_ratio_lineage": 5.0,
+    "incidents_without_lineage": 5,
+    "compression_ratio_naive": 1.0
+  },
+  {
+    "lineage_depth": 5,
+    "raw_anomalies": 6,
+    "incidents_with_lineage": 1,
+    "compression_ratio_lineage": 6.0,
+    "incidents_without_lineage": 6,
+    "compression_ratio_naive": 1.0
+  }
+]

@@ -1,0 +1,201 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "datareliant"
+version = "0.1.0"
+description = "Autonomous Data Quality, Anomaly Detection & Root-Cause Intelligence Platform"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+authors = [
+    { name = "DataReliant Contributors" },
+]
+keywords = [
+    "data-quality",
+    "anomaly-detection",
+    "root-cause-analysis",
+    "data-observability",
+    "pipeline-lineage",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Database",
+]
+
+dependencies = [
+    # Web framework
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.5.0",
+    # Database
+    "sqlalchemy>=2.0.35",
+    "greenlet>=3.0.0",
+    "alembic>=1.13.0",
+    "asyncpg>=0.30.0",
+    "psycopg2-binary>=2.9.9",
+    "aiosqlite>=0.20.0",
+    # Data processing
+    "polars>=1.9.0",
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "pyarrow>=17.0.0",
+    "duckdb>=1.1.0",
+    # Statistics / ML
+    "scipy>=1.14.0",
+    "statsmodels>=0.14.0",
+    "scikit-learn>=1.5.0",
+    "xgboost>=2.1.0",
+    # Graph
+    "networkx>=3.3",
+    # Utilities
+    "pyyaml>=6.0.2",
+    "python-multipart>=0.0.12",
+    "httpx>=0.27.0",
+    "structlog>=24.4.0",
+    "python-dotenv>=1.0.1",
+    "tenacity>=9.0.0",
+    "click>=8.1.7",
+    "rich>=13.9.0",
+    "tabulate>=0.9.0",
+    "chardet>=5.2.0",
+]
+
+[project.optional-dependencies]
+gcp = [
+    "google-cloud-storage>=2.18.0",
+    "google-cloud-bigquery>=3.26.0",
+    "google-cloud-bigquery-storage>=2.26.0",
+]
+llm = [
+    "transformers>=4.45.0",
+    "torch>=2.4.0",
+]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-cov>=5.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-mock>=3.14.0",
+    "httpx>=0.27.0",
+    "ruff>=0.6.0",
+    "mypy>=1.11.0",
+    "pre-commit>=3.8.0",
+    "factory-boy>=3.3.0",
+    "faker>=30.0.0",
+    "hypothesis>=6.112.0",
+]
+notebooks = [
+    "jupyter>=1.1.0",
+    "matplotlib>=3.9.0",
+    "seaborn>=0.13.0",
+    "plotly>=5.24.0",
+]
+all = [
+    "datareliant[gcp,llm,dev,notebooks]",
+]
+
+[project.scripts]
+datareliant = "datareliant.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/datareliant/datareliant"
+Documentation = "https://github.com/datareliant/datareliant/tree/main/docs"
+Repository = "https://github.com/datareliant/datareliant"
+Issues = "https://github.com/datareliant/datareliant/issues"
+
+# ── Tool Configuration ──────────────────────────────────────────────
+
+[tool.hatch.build.targets.wheel]
+packages = ["datareliant", "generators"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "S",    # flake8-bandit
+    "A",    # flake8-builtins
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "T20",  # flake8-print
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "S101",   # allow assert in tests
+    "S603",   # allow subprocess
+    "S608",   # allow SQL string formatting in ORM
+    "E501",   # line length handled by formatter
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["datareliant", "generators"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = [
+    "duckdb.*",
+    "xgboost.*",
+    "statsmodels.*",
+    "networkx.*",
+    "chardet.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests requiring database",
+    "regression: Regression tests for known scenarios",
+    "e2e: End-to-end tests",
+    "slow: Slow-running tests",
+]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--tb=short",
+]
+
+[tool.coverage.run]
+source = ["datareliant"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+fail_under = 60
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]

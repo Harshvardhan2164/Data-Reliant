@@ -1,0 +1,92 @@
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+
+# ── Virtual environments ─────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── IDE ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# ── Environment / Secrets ────────────────────────────────────────────
+.env
+.env.example
+.env.local
+.env.production
+*.pem
+*.key
+credentials.json
+service-account*.json
+
+# ── OS ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Data (never commit data) ────────────────────────────────────────
+data/
+*.csv
+*.parquet
+*.arrow
+*.duckdb
+*.db
+*.sqlite
+!datasets/synthetic/.gitkeep
+!datasets/public/.gitkeep
+!datasets/scenarios/.gitkeep
+
+# ── Docker ───────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Node / Frontend ─────────────────────────────────────────────────
+node_modules/
+apps/web/dist/
+apps/web/.vite/
+.turbo/
+
+# ── Jupyter ──────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Testing / Coverage ──────────────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+tests/
+
+# ── Terraform ────────────────────────────────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+.terraform.lock.hcl
+
+# ── Experiments (keep structure, ignore large results) ───────────────
+experiments/results/*.csv
+experiments/results/*.png
+experiments/results/*.html
+!experiments/results/.gitkeep
+
+# ── Misc ─────────────────────────────────────────────────────────────
+*.log
+*.bak
+*.tmp

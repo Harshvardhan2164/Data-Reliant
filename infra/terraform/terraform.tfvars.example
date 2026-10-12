@@ -1,0 +1,8 @@
+project_id    = "my-gcp-project-id"
+region        = "us-central1"
+environment   = "production"
+api_image     = "us-central1-docker.pkg.dev/my-gcp-project-id/datareliant-production/api:v1.0.0"
+min_instances = 1
+max_instances = 10
+cpu_limit     = "2"
+memory_limit  = "4Gi"

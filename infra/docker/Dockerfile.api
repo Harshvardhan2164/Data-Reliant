@@ -1,0 +1,41 @@
+# ── DataReliant API ──────────────────────────────────────────────────
+# Multi-stage build for smaller production images.
+
+FROM python:3.12-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+# ── Dependencies ─────────────────────────────────────────────────────
+FROM base AS deps
+
+COPY pyproject.toml ./
+RUN pip install --upgrade pip && \
+    pip install -e "." 2>/dev/null || pip install .
+
+# ── Application ──────────────────────────────────────────────────────
+FROM base AS runtime
+
+COPY --from=deps /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=deps /usr/local/bin /usr/local/bin
+
+COPY pyproject.toml ./
+COPY datareliant/ ./datareliant/
+COPY apps/api/ ./apps/api/
+COPY generators/ ./generators/
+COPY configs/ ./configs/
+COPY alembic/ ./alembic/
+COPY alembic.ini ./
+
+RUN pip install -e . --no-deps 2>/dev/null || true
+
+# Create data directories
+RUN mkdir -p /app/data/storage
+
+EXPOSE 8000
+
+# Run with uvicorn
+CMD ["uvicorn", "apps.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

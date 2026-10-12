@@ -1,0 +1,291 @@
+{
+  "benchmark_name": "datareliant_benchmark_engine",
+  "total_scenarios": 13,
+  "detection_recall": 1.0,
+  "top_1_accuracy": 0.7692,
+  "top_3_accuracy": 0.9231,
+  "mean_compression_ratio": 1.23,
+  "mean_time_to_detect_ms": 8.4,
+  "results": [
+    {
+      "scenario_id": "missing_rows_042",
+      "scenario_type": "missing_rows",
+      "true_root_cause": "MISSING_DATA",
+      "predicted_top_1": "MISSING_DATA",
+      "predicted_top_3": [
+        "MISSING_DATA",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 15.82,
+      "evidence": {
+        "statistical": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "duplicate_rows_042",
+      "scenario_type": "duplicate_rows",
+      "true_root_cause": "DUPLICATE_INGESTION",
+      "predicted_top_1": "DUPLICATE_INGESTION",
+      "predicted_top_3": [
+        "DUPLICATE_INGESTION",
+        "MISSING_DATA",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 8.66,
+      "evidence": {
+        "statistical": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "null_spike_042",
+      "scenario_type": "null_spike",
+      "true_root_cause": "NULL_SPIKE",
+      "predicted_top_1": "NULL_SPIKE",
+      "predicted_top_3": [
+        "NULL_SPIKE",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 6.22,
+      "evidence": {
+        "statistical": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "schema_addition_042",
+      "scenario_type": "schema_addition",
+      "true_root_cause": "SCHEMA_DRIFT",
+      "predicted_top_1": "SCHEMA_DRIFT",
+      "predicted_top_3": [
+        "SCHEMA_DRIFT",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 5.67,
+      "evidence": {
+        "schema": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "schema_removal_042",
+      "scenario_type": "schema_removal",
+      "true_root_cause": "SCHEMA_DRIFT",
+      "predicted_top_1": "SCHEMA_DRIFT",
+      "predicted_top_3": [
+        "SCHEMA_DRIFT",
+        "MISSING_DATA",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 7.86,
+      "evidence": {
+        "schema": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "datatype_change_042",
+      "scenario_type": "datatype_change",
+      "true_root_cause": "TYPE_CHANGE",
+      "predicted_top_1": "TYPE_CHANGE",
+      "predicted_top_3": [
+        "TYPE_CHANGE",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 6.29,
+      "evidence": {
+        "schema": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "range_violation_042",
+      "scenario_type": "range_violation",
+      "true_root_cause": "TRANSFORMATION_ERROR",
+      "predicted_top_1": "TRANSFORMATION_ERROR",
+      "predicted_top_3": [
+        "TRANSFORMATION_ERROR",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 6.18,
+      "evidence": {
+        "statistical": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "categorical_corruption_042",
+      "scenario_type": "categorical_corruption",
+      "true_root_cause": "SOURCE_DATA_CHANGE",
+      "predicted_top_1": "SOURCE_DATA_CHANGE",
+      "predicted_top_3": [
+        "SOURCE_DATA_CHANGE",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 8.64,
+      "evidence": {
+        "statistical": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "distribution_shift_042",
+      "scenario_type": "distribution_shift",
+      "true_root_cause": "DISTRIBUTION_SHIFT",
+      "predicted_top_1": "DISTRIBUTION_SHIFT",
+      "predicted_top_3": [
+        "DISTRIBUTION_SHIFT",
+        "UPSTREAM_FAILURE"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 10.64,
+      "evidence": {
+        "statistical": 0.95,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "timezone_shift_042",
+      "scenario_type": "timezone_shift",
+      "true_root_cause": "TIMEZONE_MISMATCH",
+      "predicted_top_1": "UPSTREAM_FAILURE",
+      "predicted_top_3": [
+        "UPSTREAM_FAILURE",
+        "TIMEZONE_MISMATCH"
+      ],
+      "top_1_correct": false,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 9.68,
+      "evidence": {
+        "graph": 0.8,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "late_arrival_042",
+      "scenario_type": "late_arrival",
+      "true_root_cause": "LATE_ARRIVAL",
+      "predicted_top_1": "UPSTREAM_FAILURE",
+      "predicted_top_3": [
+        "UPSTREAM_FAILURE",
+        "LATE_ARRIVAL"
+      ],
+      "top_1_correct": false,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 1,
+      "compressed_incident_count": 1,
+      "compression_ratio": 1.0,
+      "time_to_detect_ms": 7.61,
+      "evidence": {
+        "graph": 0.8,
+        "propagation": 0.4
+      }
+    },
+    {
+      "scenario_id": "upstream_failure_042",
+      "scenario_type": "upstream_failure",
+      "true_root_cause": "UPSTREAM_FAILURE",
+      "predicted_top_1": "UPSTREAM_FAILURE",
+      "predicted_top_3": [
+        "UPSTREAM_FAILURE",
+        "MISSING_DATA"
+      ],
+      "top_1_correct": true,
+      "top_3_correct": true,
+      "detected": true,
+      "anomaly_count": 2,
+      "compressed_incident_count": 1,
+      "compression_ratio": 2.0,
+      "time_to_detect_ms": 6.57,
+      "evidence": {
+        "graph": 1.0,
+        "statistical": 0.9,
+        "propagation": 0.6000000000000001,
+        "temporal": 0.8
+      }
+    },
+    {
+      "scenario_id": "mixed_failure_042",
+      "scenario_type": "mixed_failure",
+      "true_root_cause": "TRANSFORMATION_ERROR",
+      "predicted_top_1": "SCHEMA_DRIFT",
+      "predicted_top_3": [
+        "SCHEMA_DRIFT",
+        "NULL_SPIKE",
+        "SOURCE_DATA_CHANGE"
+      ],
+      "top_1_correct": false,
+      "top_3_correct": false,
+      "detected": true,
+      "anomaly_count": 3,
+      "compressed_incident_count": 1,
+      "compression_ratio": 3.0,
+      "time_to_detect_ms": 9.41,
+      "evidence": {
+        "schema": 0.95,
+        "propagation": 0.4,
+        "temporal": 0.8
+      }
+    }
+  ],
+  "evaluated_at": "2026-10-10T11:02:01.969482Z"
+}

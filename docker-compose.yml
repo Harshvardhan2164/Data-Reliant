@@ -1,0 +1,73 @@
+services:
+  # ── PostgreSQL ───────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: datareliant-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-datareliant}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-datareliant}
+      POSTGRES_DB: ${POSTGRES_DB:-datareliant}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-datareliant}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    container_name: datareliant-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DEBUG: ${DEBUG:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-datareliant}:${POSTGRES_PASSWORD:-datareliant}@postgres:5432/${POSTGRES_DB:-datareliant}
+      DATABASE_URL_SYNC: postgresql+psycopg2://${POSTGRES_USER:-datareliant}:${POSTGRES_PASSWORD:-datareliant}@postgres:5432/${POSTGRES_DB:-datareliant}
+      STORAGE_BACKEND: local
+      LOCAL_STORAGE_PATH: /app/data/storage
+      DUCKDB_PATH: /app/data/analytics.duckdb
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - ./datareliant:/app/datareliant
+      - ./apps/api:/app/apps/api
+      - ./configs:/app/configs
+      - ./generators:/app/generators
+      - ./datasets:/app/datasets
+      - api-data:/app/data
+
+  # ── React Frontend ──────────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.web
+    container_name: datareliant-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      VITE_API_URL: http://localhost:${API_PORT:-8000}
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/web/src:/app/apps/web/src
+      - ./apps/web/public:/app/apps/web/public
+
+volumes:
+  pgdata:
+    driver: local
+  api-data:
+    driver: local

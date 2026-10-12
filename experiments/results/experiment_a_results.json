@@ -1,0 +1,23 @@
+{
+  "heuristic_baseline": {
+    "detection_recall": 1.0,
+    "top_1_accuracy": 0.6923,
+    "top_3_accuracy": 0.6923,
+    "mean_compression_ratio": 1.23,
+    "mean_latency_ms": 6.24
+  },
+  "deterministic_engine": {
+    "detection_recall": 1.0,
+    "top_1_accuracy": 0.7692,
+    "top_3_accuracy": 0.9231,
+    "mean_compression_ratio": 1.23,
+    "mean_latency_ms": 5.14
+  },
+  "ml_classifier": {
+    "detection_recall": 1.0,
+    "top_1_accuracy": 0.2308,
+    "top_3_accuracy": 0.4615,
+    "mean_compression_ratio": 1.23,
+    "mean_latency_ms": 12.97
+  }
+}
